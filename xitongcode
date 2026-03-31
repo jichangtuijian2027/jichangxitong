@@ -1,0 +1,132 @@
+# 简易机场管理系统
+class Flight:
+    """航班类：定义单个航班的属性和方法"""
+    def __init__(self, flight_num, destination, departure_time, gate):
+        # 航班号
+        self.flight_num = flight_num
+        # 目的地
+        self.destination = destination
+        # 起飞时间
+        self.departure_time = departure_time
+        # 登机口
+        self.gate = gate
+        # 航班状态：默认未值机
+        self.status = "未值机"
+        # 乘客列表
+        self.passengers = []
+
+    def check_in(self, passenger_name):
+        """乘客值机"""
+        if passenger_name not in self.passengers:
+            self.passengers.append(passenger_name)
+            print(f"乘客 {passenger_name} 值机成功！")
+        else:
+            print(f"乘客 {passenger_name} 已完成值机！")
+
+    def boarding(self):
+        """开始登机"""
+        self.status = "正在登机"
+        print(f"航班 {self.flight_num} 已开始登机！")
+
+    def take_off(self):
+        """航班起飞"""
+        self.status = "已起飞"
+        print(f"航班 {self.flight_num} 已安全起飞！")
+
+    def show_info(self):
+        """显示航班详细信息"""
+        print(f"\n===== 航班 {self.flight_num} 信息 =====")
+        print(f"目的地：{self.destination}")
+        print(f"起飞时间：{self.departure_time}")
+        print(f"登机口：{self.gate}")
+        print(f"当前状态：{self.status}")
+        print(f"已值机乘客：{', '.join(self.passengers) if self.passengers else '无'}")
+        print("="*30)
+
+
+class Airport:
+    """机场类：管理所有航班"""
+    def __init__(self, airport_name):
+        self.airport_name = airport_name
+        # 航班列表
+        self.flights = []
+
+    def add_flight(self, flight):
+        """添加新航班"""
+        self.flights.append(flight)
+        print(f"航班 {flight.flight_num} 添加成功！")
+
+    def find_flight(self, flight_num):
+        """根据航班号查找航班"""
+        for flight in self.flights:
+            if flight.flight_num == flight_num:
+                return flight
+        print(f"未找到航班 {flight_num}")
+        return None
+
+    def show_all_flights(self):
+        """显示所有航班信息"""
+        print(f"\n===== {self.airport_name} 所有航班 =====")
+        if not self.flights:
+            print("暂无航班信息")
+            return
+        for flight in self.flights:
+            flight.show_info()
+
+
+# 主程序：系统交互入口
+if __name__ == "__main__":
+    # 创建机场实例
+    airport = Airport("首都国际机场")
+
+    # 初始化测试航班
+    flight1 = Flight("CA123", "上海", "08:30", "A01")
+    flight2 = Flight("MU456", "广州", "10:15", "B02")
+    airport.add_flight(flight1)
+    airport.add_flight(flight2)
+
+    # 系统菜单
+    while True:
+        print("\n===== 机场管理系统菜单 =====")
+        print("1. 查看所有航班")
+        print("2. 查询单个航班")
+        print("3. 乘客值机")
+        print("4. 开始登机")
+        print("5. 航班起飞")
+        print("0. 退出系统")
+        choice = input("请输入操作序号：")
+
+        if choice == "1":
+            airport.show_all_flights()
+
+        elif choice == "2":
+            num = input("请输入航班号：")
+            flight = airport.find_flight(num)
+            if flight:
+                flight.show_info()
+
+        elif choice == "3":
+            num = input("请输入航班号：")
+            flight = airport.find_flight(num)
+            if flight:
+                name = input("请输入乘客姓名：")
+                flight.check_in(name)
+
+        elif choice == "4":
+            num = input("请输入航班号：")
+            flight = airport.find_flight(num)
+            if flight:
+                flight.boarding()
+
+        elif choice == "5":
+            num = input("请输入航班号：")
+            flight = airport.find_flight(num)
+            if flight:
+                flight.take_off()
+
+        elif choice == "0":
+            print("感谢使用机场管理系统，再见！")
+            break
+
+        else:
+            print("输入无效，请重新选择！")
